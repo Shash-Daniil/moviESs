@@ -22,7 +22,11 @@ export default class MovieService extends React.Component {
 
     async getRatedMovies(guestSessionId) {
         const response = await this.getSrc(`/3/guest_session/${guestSessionId}/rated/movies?`)
-        console.log(response)
-        return response
+        return response.results
+    }
+
+    async getGenres() {
+        const response = await this.getSrc(`/3/genre/movie/list?`)
+        return response.genres
     }
 }

@@ -50,6 +50,7 @@ body {
     padding: 0;
     font-size: 20px;
     font-weight: 400;
+    width: 205px;
 }
 
 .movie-card__date {
@@ -60,12 +61,15 @@ body {
 
 .genres {
     margin-bottom: 7px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .genres__item {
     height: 20px;
     padding: 0 3px;
     margin-right: 7px;
+    margin-bottom: 4px;
     background: #FAFAFA;
     border: 1px solid #D9D9D9;
     box-sizing: border-box;
@@ -83,12 +87,6 @@ body {
     line-height: 22px;
 }
 
-.movie-list::after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
 .tabs {
     display: flex;
     justify-content: center;
@@ -100,4 +98,18 @@ body {
     bottom: 0;
     margin-bottom: 10px;
     padding-left: 2px;
+}
+
+.current-movie-rating {
+    position: absolute;
+    font-size: 12px;
+    font-weight: 600;
+    right: 9px;
+    top: 12px;
+    width: 30px;
+    height: 30px;
+    border: 2px solid;
+    border-radius: 50%;
+    padding-top: 3px;
+    text-align: center;
 }

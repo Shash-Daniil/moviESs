@@ -2,6 +2,8 @@ import React from 'react'
 import toDate from 'date-fns/toDate'
 import format from 'date-fns/format'
 import { Rate } from 'antd';
+import { Consumer } from '../App'
+import Genre from './genre/Genre'
 
 export default class Movie extends React.Component {
 
@@ -35,7 +37,6 @@ export default class Movie extends React.Component {
                                             body: JSON.stringify( {value: rating} )
                                         }
                                     )
-        console.log(response)
     }
 
     render() {
@@ -46,30 +47,59 @@ export default class Movie extends React.Component {
             date = String(format(toDate(new Date(this.props.date)), "MMMM dd, yyyy"))
         } catch(e) {
             date = String(format(toDate(new Date()), "MMMM dd, yyyy"))
-            console.log(`Movie.js ERR!!!  ${e}`)
+            console.log(`Movie.js date format ERR!!!  ${e}`)
         }
+
         return (
-            <div className='movie-card'>
-                <img className='movie-card__picture' src={`https://image.tmdb.org/t/p/w200${imgSrc}`}></img>
-                <div className='movie-card__description'>
-                    <h5 className='movie-card__title'>{ title }</h5>
-                    <div className='movie-card__date'>{ date }</div>
-                    <div className='genres'>
-                        <span className="genres__item">Drama</span>
-                        <span className="genres__item">Comedy</span>
-                    </div>
-                    <div className='movie-card__story'>
-                        {overview}
-                    </div>
-                    <div className="rate">
-                        <Rate onChange={event => this.onRateMovie(event)} 
-                            allowHalf={true} 
-                            count={10} 
-                            style={{fontSize: "16px" }}
-                            value={this.state.stars}/>
-                    </div>
-                </div>
-            </div>
+            <Consumer>
+                {
+                    genres => {
+                        let currentGenres = []
+                        if (genres) {
+                            genres.forEach(elem => {
+                                if (this.props.genres.indexOf(elem.id) !== -1)
+                                    currentGenres.push(elem.name)
+                            })
+                        }
+
+                        const ratingStyle = () => {
+                            let style
+                            if (this.state.stars <= 3)
+                                return { borderColor: "#E90000" }
+                            else if (this.state.stars > 3 && this.state.stars <= 5)
+                                return { borderColor: "#E97E00" }
+                            else if (this.state.stars > 5 && this.state.stars <= 7)
+                                return { borderColor: "#E9D100" }
+                            else if (this.state.stars > 7)
+                                return { borderColor: "#66E900" }
+                        }
+
+                        return (
+                            <div className='movie-card'>
+                                <img className='movie-card__picture' src={`https://image.tmdb.org/t/p/w200${imgSrc}`}></img>
+                                <div className='movie-card__description'>
+                                    <h5 className='movie-card__title'>{ title }</h5>
+                                    <div className='current-movie-rating' style={ratingStyle()}>{this.state.stars}</div>
+                                    <div className='movie-card__date'>{ date }</div>
+                                    <div className='genres'>
+                                        {currentGenres.map(elem => <Genre genre={elem} />)}
+                                    </div>
+                                    <div className='movie-card__story'>
+                                        {overview}
+                                    </div>
+                                    <div className="rate">
+                                        <Rate onChange={event => this.onRateMovie(event)} 
+                                            allowHalf={true} 
+                                            count={10} 
+                                            style={{fontSize: "16px" }}
+                                            value={this.state.stars}/>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    }
+                }
+            </Consumer>
         )
     }
 }
