@@ -1,14 +1,13 @@
 import React from 'react';
-import Movie from './components/Movie'
+import { Input , Pagination } from 'antd';
+import debounce from 'lodash.debounce'
+import Movie from './components/Movie/Movie'
 import MovieService from './Services/MovieService'
 import Tabs from './components/Tabs/Tabs'
-import { Input } from 'antd';
-import { Pagination } from 'antd';
 import '../node_modules/antd/dist/antd.css';
-import Spinner from './components/spinner/Spinner'
-import debounce from 'lodash.debounce'
-
-export const { Provider, Consumer } = React.createContext()
+import Spinner from './components/Spinner/Spinner'
+import { Provider } from './Context/Context'
+import { SEARCH } from './const_strings'
 
 export default class App extends React.Component {
     
@@ -19,30 +18,12 @@ export default class App extends React.Component {
         page: 1,
         guestSession: '',
         currentTab: 'search',
-        genres: ''
+        genres: '',
+        ratedMovies: {},
+        error: false
     }
 
     movieService = new MovieService()
-
-    updateMovies() {
-        if (this.state.currentTab === 'rated') {
-            const kek = this.movieService.getRatedMovies(this.state.guestSession)
-            kek.then(data => {
-                this.setState({
-                    movies: data,
-                    loading: false
-                })
-            })
-        } else {
-            const kek = this.movieService.getMovies(this.state.label, this.state.page)
-            kek.then(data => {
-                this.setState({
-                    movies: data,
-                    loading: false
-                })
-            })
-        }
-    }
 
     componentDidMount() {
         this.updateMovies()
@@ -53,18 +34,9 @@ export default class App extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.state.currentTab !== prevState.currentTab) {
+        const { currentTab } = this.state
+        if (currentTab !== prevState.currentTab) {
             this.updateMovies()
-        }
-    }
-
-    debouncedUpdate() {
-        const debouncedUpdates = debounce(() => this.updateMovies(), 1500)
-        if (this.state.loading === false) {
-            this.setState({
-                loading: true
-            })
-            debouncedUpdates()
         }
     }
 
@@ -85,35 +57,79 @@ export default class App extends React.Component {
         this.setState({currentTab: key})
     }
 
-    render() {
-        let show
+    debouncedUpdate() {
+        const debouncedUpdates = debounce(() => this.updateMovies(), 1500)
+        const { loading } = this.state
+        if (loading === false) {
+            this.setState({
+                loading: true
+            })
+            debouncedUpdates()
+        }
+    }
 
-        if (!this.state.movies || this.state.movies.length === 0 && !this.state.loading) {
+    updateMovies() {
+        const { currentTab, guestSession, label, page } = this.state
+        if (currentTab === 'rated') {
+            const kek = this.movieService.getRatedMovies(guestSession)
+            kek.then(data => {
+                this.setState({
+                    movies: data,
+                    loading: false
+                })
+            })
+        } else {
+            const kek = this.movieService.getMovies(label, page)
+            kek.then(data => {
+                this.setState({
+                    movies: data,
+                    loading: false
+                })
+            }).catch(() => this.setState({error: true}))
+        }
+    }
+
+    addRatedMovie(id, stars) {
+        this.setState(prev => ({ratedMovies: {...prev.ratedMovies, [id]: stars}}))
+    }
+
+    render() {
+        const { error, movies, loading, guestSession, page, ratedMovies } = this.state
+        let show
+        if (error) {
+            show = <div>error</div>
+        } else if (!movies || movies.length === 0 && !loading) {
             show = <div>not found ;)</div>
         } else {
-            show = (this.state.movies.length !== 0 && !this.state.loading) ? this.state.movies.map(elem => <Movie
+            show = (movies.length !== 0 && !loading) ? movies.map(elem => <Movie
+                addRatedMovie={this.addRatedMovie.bind(this)}                           // eslint-disable-line react/jsx-no-bind 
                 genres={elem.genre_ids}
-                guestSession={this.state.guestSession}
+                guestSession={guestSession}
                 id={elem.id}
-                loading={this.state.loading}
+                loading={loading}
                 key={elem.id}
                 title={elem.title}
                 imgSrc={elem.poster_path}
                 overview={elem.overview}
                 date={elem.release_date}
-                page={this.state.page}/>) : <Spinner />
+                rating={ratedMovies[elem.id] || elem.rating || elem.vote_average}
+                page={page}/>) : <Spinner />
         }
+
+        const { genres, currentTab, label } = this.state
 
         return (
             <div className="main">
-                <Provider value={this.state.genres}>
-                    <Tabs current={this.state.currentTab} onSetCurrent={(key) => this.onSetCurrent(key)}/>
-                    <Input value={this.state.label}
-                        onChange={(e) => this.onLabelChange(e.target.value)}/>
+                <Provider value={genres}>
+                    <Tabs current={currentTab} onSetCurrent={(key) => this.onSetCurrent(key)}/>
+                    <Input value={label}
+                        onChange={(event) => this.onLabelChange(event.target.value)}/>
                     <div className="movie-list">
                         {show}
                     </div>
-                    <Pagination onChange={ (event) => this.onPageChange(event) } style={{width:275, display:"block", margin:"0 auto"}} defaultCurrent={1} total={50} />
+                    <Pagination onChange={ (event) => this.onPageChange(event) } 
+                        style={{display:"flex", justifyContent: "center"}}
+                        defaultCurrent={1} total={500} />
                 </Provider>
             </div>
         )

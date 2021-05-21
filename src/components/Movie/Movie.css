@@ -1,0 +1,124 @@
+.movie-card__picture {
+    display: flex;
+    align-items: center;
+    width: 183px;
+}
+@media (max-width: 1020px) {
+    .movie-card__picture {
+        display: block;
+        width: 61px;
+        height: 91px;
+        object-fit: contain;
+        float: left;
+    }
+}
+
+.movie-card {
+    position: relative;
+    display: flex;
+    width: 454px;
+    margin-bottom: 36px;
+    height: 281px;
+    box-shadow: 2px 2px 10px 0px rgba(0, 0, 0, 0.25);
+}
+@media (max-width: 1020px) {
+    .movie-card {
+        padding: 6px 10px;
+        display: block;
+        width: 387px;
+        height: 245px;
+        margin-bottom: 20px;
+    }
+}
+
+.movie-card__description {
+    padding: 12px 20px;
+    overflow: hidden;
+}
+@media (max-width: 1020px) {
+    .movie-card__description {
+        padding: 0;
+        overflow: hidden;
+        padding-left: 13px;
+    }
+}
+
+.movie-card__title {
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    font-weight: 400;
+    width: 205px;
+}
+
+.movie-card__date {
+    font-size: 12px;
+    color: #827E7E;
+    margin: 7px 0;
+}
+
+.genres {
+    margin-bottom: 7px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.movie-card__story {
+    max-width: 228px;
+    font-weight: 400;
+    color: #000000;
+    font-size: 12px;
+    line-height: 22px;
+}
+@media (max-width: 1020px) {
+    .movie-card__story {
+        display: none;
+        font-weight: 400;
+        color: #000000;
+        font-size: 12px;
+        line-height: 22px;
+    }
+}
+
+.movie-card__story_mobile {display: none;}
+@media (max-width: 1020px) {
+    .movie-card__story_mobile {
+        display: block;
+        max-width: 100%px;
+        font-weight: 400;
+        color: #000000;
+        font-size: 12px;
+        line-height: 22px;
+        clear: both;
+    }
+}
+
+.rate {
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 10px;
+    padding-left: 2px;
+}
+@media (max-width: 1020px) {
+    .rate {
+        position: absolute;
+        bottom: 0;
+        right: 10px;
+        margin-bottom: 10px;
+        padding-left: 2px;
+    }
+}
+
+.current-movie-rating {
+    position: absolute;
+    font-size: 12px;
+    font-weight: 600;
+    right: 9px;
+    top: 12px;
+    width: 30px;
+    height: 30px;
+    border: 2px solid;
+    border-radius: 50%;
+    padding-top: 3px;
+    text-align: center;
+}
