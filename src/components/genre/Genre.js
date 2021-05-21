@@ -1,17 +1,15 @@
-import React from 'react'
-import './Genre.css'
+import React from 'react';
+import './Genre.css';
 import PropTypes from 'prop-types';
 
-const Genre = props => {
-    const { genre } = props
+const Genre = (props) => {
+  const { genre } = props;
 
-    return (
-        <span className="genres__item">{genre}</span>
-    )
-}
+  return <span className="genres__item">{genre}</span>;
+};
 
 Genre.propTypes = {
-    genre: PropTypes.string.isRequired,
-}
+  genre: PropTypes.string.isRequired,
+};
 
-export default Genre
+export default Genre;

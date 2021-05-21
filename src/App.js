@@ -7,7 +7,8 @@ import Tabs from './components/Tabs/Tabs';
 import '../node_modules/antd/dist/antd.css';
 import Spinner from './components/Spinner/Spinner';
 import { Provider } from './Context/Context';
-import { SEARCH } from './const_strings';
+import { SEARCH, RATED } from './const_strings';
+import './App.css';
 
 export default class App extends React.Component {
   state = {
@@ -53,7 +54,7 @@ export default class App extends React.Component {
   }
 
   onSetCurrent(key) {
-    this.setState({ currentTab: key });
+    this.setState({ currentTab: key, page: 1 });
   }
 
   debouncedUpdate() {
@@ -69,8 +70,8 @@ export default class App extends React.Component {
 
   updateMovies() {
     const { currentTab, guestSession, label, page } = this.state;
-    if (currentTab === 'rated') {
-      const kek = this.movieService.getRatedMovies(guestSession);
+    if (currentTab === RATED) {
+      const kek = this.movieService.getRatedMovies(guestSession, page);
       kek.then((data) => {
         this.setState({
           movies: data,
@@ -136,7 +137,7 @@ export default class App extends React.Component {
           <Pagination
             onChange={(event) => this.onPageChange(event)}
             style={{ display: 'flex', justifyContent: 'center' }}
-            defaultCurrent={1}
+            current={page}
             total={500}
           />
         </Provider>

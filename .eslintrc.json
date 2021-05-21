@@ -28,7 +28,11 @@
     "react/state-in-constructor": ["off"],
     "react/jsx-props-no-spreading": ["off"],
     "react/static-property-placement": "off",
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
+    "import/no-unresolved": [
+      2, 
+      { "caseSensitive": false }
+   ]
   },
   "settings": {
     "react": {
