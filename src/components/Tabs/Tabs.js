@@ -2,7 +2,7 @@ import React from 'react';
 import './Tabs.css';
 import PropTypes from 'prop-types';
 import { Menu } from 'antd';
-import { SEARCH, RATED } from '../../const_strings';
+import { SEARCH, RATED } from '../../tabTypes';
 
 const Tabs = (props) => {
   const { current } = props;

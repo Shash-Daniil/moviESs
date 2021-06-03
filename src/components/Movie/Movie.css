@@ -1,3 +1,10 @@
+:root {
+    --red: #E90000;
+    --orange: #E97E00;
+    --yellow: #E9D100;
+    --green: #66E900;
+}
+
 .movie-card__picture {
     display: flex;
     align-items: center;
@@ -121,4 +128,19 @@
     border-radius: 50%;
     padding-top: 3px;
     text-align: center;
+}
+.current-movie-rating_color_red {
+    border-color: var(--red);
+}
+
+.current-movie-rating_color_orange {
+    border-color: var(--orange);
+}
+
+.current-movie-rating_color_yellow {
+    border-color: var(--yellow);
+}
+
+.current-movie-rating_color_green {
+    border-color: var(--green);
 }

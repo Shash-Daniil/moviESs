@@ -3,10 +3,10 @@ import toDate from 'date-fns/toDate';
 import format from 'date-fns/format';
 import { Rate } from 'antd';
 import PropTypes from 'prop-types';
+import MovieService from '../../Services/MovieService';
 import { Consumer } from '../../Context/Context';
 import Genre from '../Genre/Genre';
 import './Movie.css';
-import { RED, YELLOW, ORANGE, GREEN } from '../../const_strings';
 
 export default class Movie extends React.Component {
   static propTypes = {
@@ -17,7 +17,7 @@ export default class Movie extends React.Component {
     title: PropTypes.string.isRequired,
     imgSrc: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
-    genres: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    genres: PropTypes.instanceOf(Array).isRequired,
     overview: PropTypes.string.isRequired,
   };
 
@@ -25,6 +25,8 @@ export default class Movie extends React.Component {
     movieId: this.props.id, // eslint-disable-line react/destructuring-assignment
     stars: this.props.rating ? this.props.rating : 0, // eslint-disable-line react/destructuring-assignment
   };
+
+  movieService = new MovieService();
 
   onRateMovie(event) {
     const { addRatedMovie, guestSession } = this.props;
@@ -36,18 +38,9 @@ export default class Movie extends React.Component {
     this.onRate(movieId, event, guestSession);
   }
 
-  onRate = async (movieId, rating, guestSessionId) => {
-    await fetch(
-      `https://api.themoviedb.org/3/movie/${movieId}/rating?api_key=fa832a734f20f8be63029b222e768ceb&guest_session_id=${guestSessionId}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-        },
-        body: JSON.stringify({ value: rating }),
-      }
-    );
-  };
+  onRate(movieId, rating, guestSessionId) {
+    this.movieService.rateMovie(movieId, rating, guestSessionId);
+  }
 
   spliceOverview(str) {
     const arrStr = str.split('');
@@ -84,18 +77,18 @@ export default class Movie extends React.Component {
 
           const ratingStyle = () => {
             if (stars <= 3) {
-              return { borderColor: RED };
+              return 'current-movie-rating_color_red';
             }
             if (stars > 3 && stars <= 5) {
-              return { borderColor: ORANGE };
+              return 'current-movie-rating_color_orange';
             }
             if (stars > 5 && stars <= 7) {
-              return { borderColor: YELLOW };
+              return 'current-movie-rating_color_yellow';
             }
             if (stars > 7) {
-              return { borderColor: GREEN };
+              return 'current-movie-rating_color_green';
             }
-            return {};
+            return '';
           };
 
           /* eslint-disable react/no-array-index-key */
@@ -106,9 +99,7 @@ export default class Movie extends React.Component {
                 <h5 className="movie-card__title" style={{ fontSize: title.length > 20 ? '16px' : null }}>
                   {title}
                 </h5>
-                <div className="current-movie-rating" style={ratingStyle()}>
-                  {stars}
-                </div>
+                <div className={['current-movie-rating', ratingStyle()].join(' ')}>{stars}</div>
                 <div className="movie-card__date">{formatedDate}</div>
                 <div className="genres">
                   {currentGenres.map((elem, index) => (
@@ -118,10 +109,10 @@ export default class Movie extends React.Component {
                 <div className="movie-card__story">{overview}</div>
                 <div className="rate">
                   <Rate
+                    className="stars"
                     onChange={(event) => this.onRateMovie(event)}
                     allowHalf
                     count={10}
-                    style={{ fontSize: '16px' }}
                     value={stars}
                   />
                 </div>
